@@ -35,9 +35,26 @@
 			]
 		},
 		{
-			"label": "Compile RISC-V Linux Kernel",
+			"label": "Disasm ELF",
 			"type": "shell",
-			"command": "make defconfig && make menuconfig && make -j$(nproc)",
+			"command": "riscv64-linux-gnu-objdump -dx linux/vmlinux > vmlinux.disasm",
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}",
+					"ARCH": "riscv",
+					"CROSS_COMPILE": "riscv64-linux-gnu-"
+				}
+			},
+			"detail": "disasm",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "defconfig",
+			"type": "shell",
+			"command": "make defconfig",
 			"options": {
 				"cwd": "${workspaceFolder}/linux",
 				"env": {
@@ -46,6 +63,61 @@
 					"CROSS_COMPILE": "riscv64-linux-gnu-"
 				}
 			},
+			"detail": "make defconfig",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "menuconfig",
+			"type": "shell",
+			"command": "make menuconfig",
+			"options": {
+				"cwd": "${workspaceFolder}/linux",
+				"env": {
+					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}",
+					"ARCH": "riscv",
+					"CROSS_COMPILE": "riscv64-linux-gnu-"
+				}
+			},
+			"detail": "make menuconfig",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "gen rootfs",
+			"type": "shell",
+			"command": "find . | cpio -o --format=newc | gzip > ../rootfs.cpio.gz",
+			"options": {
+				"cwd": "${workspaceFolder}/rootfs",
+				"env": {
+					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}",
+					"ARCH": "riscv",
+					"CROSS_COMPILE": "riscv64-linux-gnu-"
+				}
+			},
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "Compile RISC-V Linux Kernel",
+			"type": "shell",
+			"command": "make -j$(nproc)",
+			"options": {
+				"cwd": "${workspaceFolder}/linux",
+				"env": {
+					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}",
+					"ARCH": "riscv",
+					"CROSS_COMPILE": "riscv64-linux-gnu-"
+				}
+			},
+			"dependsOn": [
+				"menuconfig",
+				"gen rootfs",
+			],
+			"dependsOrder": "sequence",
 			"detail": "编译 RISCV 内核",
 			"problemMatcher": [
 				"$gcc"

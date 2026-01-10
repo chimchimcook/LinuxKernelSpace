@@ -7,7 +7,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/linux/vmlinux",
 			"args": [],
-			"stopAtEntry": false,
+			"stopAtEntry": true,
 			"cwd": "${workspaceFolder}/linux",
 			"externalConsole": false,
 			"preLaunchTask": "qemu boot debug",
@@ -17,12 +17,18 @@
 			"internalConsoleOptions": "openOnSessionStart",
 			"setupCommands": [
 				{
+					"text": "set architecture riscv:rv64"
+				},
+				{
 					"description": "Enable pretty print",
 					"text": "enable-pretty-printing",
 					"ignoreFailures": true
 				},
 				{
 					"text": "set output-radix 16",
+				},
+				{
+					"text": "add-auto-load-safe-path /home/xingjiaxin/Code/linux_space/linux/scripts/gdb/vmlinux-gdb.py",
 				},
 			]
 		},
