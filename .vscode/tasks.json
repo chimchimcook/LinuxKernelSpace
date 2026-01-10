@@ -1,0 +1,114 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Gen clangd db",
+			"type": "shell",
+			"command": "scripts/clang-tools/gen_compile_commands.py",
+			"options": {
+				"cwd": "${workspaceFolder}/linux",
+				"env": {
+					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}"
+				}
+			},
+			"detail": "compile commands 生成",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "Copy clangd db",
+			"type": "shell",
+			"command": "mv linux/compile_commands.json .vscode/build",
+			"dependsOn": [
+				"Gen clangd db"
+			],
+			"dependsOrder": "sequence",
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}"
+				}
+			},
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "Compile RISC-V Linux Kernel",
+			"type": "shell",
+			"command": "make defconfig && make menuconfig && make -j$(nproc)",
+			"options": {
+				"cwd": "${workspaceFolder}/linux",
+				"env": {
+					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}",
+					"ARCH": "riscv",
+					"CROSS_COMPILE": "riscv64-linux-gnu-"
+				}
+			},
+			"detail": "编译 RISCV 内核",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "qemu boot",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}"
+				}
+			},
+			"command": "qemu-system-riscv64",
+			"args": [
+				"-machine",
+				"virt",
+				"-nographic",
+				"-smp",
+				"1",
+				"-m",
+				"256M",
+				"-kernel",
+				"linux/arch/riscv/boot/Image",
+				"-initrd",
+				"rootfs.cpio.gz",
+				"-append",
+				"\"console=ttyS0 root=/dev/ram rw\""
+			],
+			"problemMatcher": [
+				"$gcc"
+			],
+			"detail": "配置 qemu boot",
+		},
+		{
+			"label": "qemu boot debug",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"command": "qemu-system-riscv64",
+			"args": [
+				"-machine",
+				"virt",
+				"-nographic",
+				"-smp",
+				"1",
+				"-m",
+				"256M",
+				"-kernel",
+				"linux/arch/riscv/boot/Image",
+				"-initrd",
+				"rootfs.cpio.gz",
+				"-append",
+				"\"console=ttyS0 root=/dev/ram rw\"",
+				"-s",
+				"-S"
+			],
+			"problemMatcher": [
+				"$gcc"
+			],
+			"detail": "配置 qemu boot debug",
+		}
+	]
+}
