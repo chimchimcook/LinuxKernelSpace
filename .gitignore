@@ -1,3 +1,5 @@
 .vscode/build
 # Disassembly of section .head.text:
 *.disasm
+*.out
+*.o
