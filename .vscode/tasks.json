@@ -11,10 +11,7 @@
 					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}"
 				}
 			},
-			"detail": "compile commands 生成",
-			"problemMatcher": [
-				"$gcc"
-			]
+			"detail": "compile commands 生成"
 		},
 		{
 			"label": "Copy clangd db",
@@ -30,9 +27,8 @@
 					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}"
 				}
 			},
-			"problemMatcher": [
-				"$gcc"
-			]
+			"detail": "compile commands 生成",
+			"problemMatcher": []
 		},
 		{
 			"label": "Disasm ELF",
@@ -46,10 +42,7 @@
 					"CROSS_COMPILE": "riscv64-linux-gnu-"
 				}
 			},
-			"detail": "disasm",
-			"problemMatcher": [
-				"$gcc"
-			]
+			"detail": "disasm"
 		},
 		{
 			"label": "defconfig",
@@ -63,10 +56,7 @@
 					"CROSS_COMPILE": "riscv64-linux-gnu-"
 				}
 			},
-			"detail": "make defconfig",
-			"problemMatcher": [
-				"$gcc"
-			]
+			"detail": "make defconfig"
 		},
 		{
 			"label": "menuconfig",
@@ -80,10 +70,7 @@
 					"CROSS_COMPILE": "riscv64-linux-gnu-"
 				}
 			},
-			"detail": "make menuconfig",
-			"problemMatcher": [
-				"$gcc"
-			]
+			"detail": "make menuconfig"
 		},
 		{
 			"label": "gen rootfs",
@@ -96,10 +83,7 @@
 					"ARCH": "riscv",
 					"CROSS_COMPILE": "riscv64-linux-gnu-"
 				}
-			},
-			"problemMatcher": [
-				"$gcc"
-			]
+			}
 		},
 		{
 			"label": "Compile RISC-V Linux Kernel",
@@ -115,13 +99,10 @@
 			},
 			"dependsOn": [
 				"menuconfig",
-				"gen rootfs",
+				"gen rootfs"
 			],
 			"dependsOrder": "sequence",
-			"detail": "编译 RISCV 内核",
-			"problemMatcher": [
-				"$gcc"
-			]
+			"detail": "编译 RISCV 内核"
 		},
 		{
 			"label": "qemu boot",
@@ -148,10 +129,10 @@
 				"-append",
 				"\"console=ttyS0 root=/dev/ram rw\""
 			],
-			"problemMatcher": [
-				"$gcc"
-			],
 			"detail": "配置 qemu boot",
+			"problemMatcher": [
+				"$nvcc"
+			]
 		},
 		{
 			"label": "qemu boot debug",
@@ -177,10 +158,16 @@
 				"-s",
 				"-S"
 			],
-			"problemMatcher": [
-				"$gcc"
-			],
-			"detail": "配置 qemu boot debug",
+			"detail": "配置 qemu boot debug"
+		},
+		{
+			"label": "git repo update",
+			"detail": "git repo update",
+			"command": "git submodule foreach --recursive git pull --rebase",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
 		}
 	]
 }
