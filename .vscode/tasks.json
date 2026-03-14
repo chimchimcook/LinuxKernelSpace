@@ -27,7 +27,7 @@
 					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}"
 				}
 			},
-			"detail": "compile commands 生成",
+			"detail": "compile commands 拷贝",
 			"problemMatcher": []
 		},
 		{
@@ -42,7 +42,7 @@
 					"CROSS_COMPILE": "riscv64-linux-gnu-"
 				}
 			},
-			"detail": "disasm"
+			"detail": "反汇编"
 		},
 		{
 			"label": "defconfig",
@@ -56,7 +56,7 @@
 					"CROSS_COMPILE": "riscv64-linux-gnu-"
 				}
 			},
-			"detail": "make defconfig"
+			"detail": "编译 defconfig"
 		},
 		{
 			"label": "menuconfig",
@@ -70,7 +70,10 @@
 					"CROSS_COMPILE": "riscv64-linux-gnu-"
 				}
 			},
-			"detail": "make menuconfig"
+			"detail": "编译 menuconfig",
+			"problemMatcher": [
+				"$nvcc"
+			]
 		},
 		{
 			"label": "gen rootfs",
@@ -83,7 +86,8 @@
 					"ARCH": "riscv",
 					"CROSS_COMPILE": "riscv64-linux-gnu-"
 				}
-			}
+			},
+			"detail": "编译根文件系统"
 		},
 		{
 			"label": "Compile RISC-V Linux Kernel",
@@ -102,7 +106,10 @@
 				"gen rootfs"
 			],
 			"dependsOrder": "sequence",
-			"detail": "编译 RISCV 内核"
+			"detail": "编译 RISCV 内核",
+			"problemMatcher": [
+				"$gcc"
+			]
 		},
 		{
 			"label": "qemu boot",
@@ -161,13 +168,40 @@
 			"detail": "配置 qemu boot debug"
 		},
 		{
-			"label": "git repo update",
-			"detail": "git repo update",
-			"command": "git submodule foreach --recursive git pull --rebase",
+			"label": "git submodule update",
+			"detail": "git submodule 更新",
+			"command": "git submodule update --remote --recursive",
 			"type": "shell",
 			"options": {
 				"cwd": "${workspaceFolder}"
 			},
+			"problemMatcher": [
+				"$nvcc"
+			]
+		},
+		{
+			"label": "Compile OpenSBI",
+			"detail": "编译 OpenSBI",
+			"command": "make PLATFORM=generic CROSS_COMPILE=riscv64-linux-gnu- DEBUG=1",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}/opensbi"
+			},
+			"problemMatcher": [
+				"$nvcc"
+			]
+		},
+		{
+			"label": "Compile UEFI",
+			"detail": "编译 UEFI",
+			"command": "source edksetup.sh && make -C BaseTools && build -a RISCV64 -t GCC5 -p OvmfPkg/RiscVVirt/RiscVVirtQemu.dsc -b DEBUG",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}/edk2"
+			},
+			"problemMatcher": [
+				"$nvcc"
+			]
 		}
 	]
 }

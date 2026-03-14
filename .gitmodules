@@ -4,3 +4,9 @@
 [submodule "linux"]
 	path = linux
 	url = https://github.com/torvalds/linux.git
+[submodule "edk2"]
+	path = edk2
+	url = https://github.com/tianocore/edk2.git
+[submodule "opensbi"]
+	path = opensbi
+	url = https://github.com/riscv-software-src/opensbi.git
