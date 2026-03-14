@@ -10,3 +10,6 @@
 [submodule "opensbi"]
 	path = opensbi
 	url = https://github.com/riscv-software-src/opensbi.git
+[submodule "grub"]
+	path = grub
+	url = https://git.savannah.gnu.org/git/grub.git

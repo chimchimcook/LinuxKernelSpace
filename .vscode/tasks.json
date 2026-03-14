@@ -219,12 +219,24 @@
 					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}"
 				}
 			},
-			"command": "qemu-system-riscv64 -nographic -machine virt -m 1G -bios opensbi/build/platform/generic/firmware/fw_dynamic.bin -drive if=pflash,format=raw,unit=0,file=edk2/Build/RiscVVirtQemu/DEBUG_GCC/FV/RISCV_VIRT_CODE.fd,readonly=on -drive if=pflash,format=raw,unit=1,file=edk2/Build/RiscVVirtQemu/DEBUG_GCC/FV/RISCV_VIRT_VARS.fd -drive file=esp.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 ",
+			"command": "qemu-system-riscv64 -nographic -machine virt -m 1G -bios opensbi/build/platform/generic/firmware/fw_dynamic.bin -drive if=pflash,format=raw,unit=0,file=edk2/Build/RiscVVirtQemu/DEBUG_GCC/FV/RISCV_VIRT_CODE.fd,readonly=on -drive if=pflash,format=raw,unit=1,file=edk2/Build/RiscVVirtQemu/DEBUG_GCC/FV/RISCV_VIRT_VARS.fd -drive file=esp.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0",
 			"args": [],
 			"detail": "uefi boot 内核",
 			"problemMatcher": [
 				"$nvcc"
 			]
-		}
+		},
+		{
+			"label": "update esp.img",
+			"detail": "更新 esp.img",
+			"command": "sudo mount esp.img /mnt && sudo cp -r esp/* /mnt && sudo umount /mnt ",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$nvcc"
+			]
+		},
 	]
 }
