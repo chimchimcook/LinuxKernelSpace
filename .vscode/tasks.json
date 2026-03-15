@@ -129,10 +129,19 @@
 				"256M",
 				"-kernel",
 				"linux/arch/riscv/boot/Image",
-				"-initrd",
-				"rootfs.cpio.gz",
+				// "-initrd",
+				// "rootfs.cpio.gz",
+				"-device",
+				"virtio-blk-device,drive=hd0",
+				"-drive",
+				"file=esp.img,format=raw,id=hd0",
+				"-device",
+				"virtio-blk-device,drive=hd1",
+				"-drive",
+				"file=rootfs.ext4,format=raw,id=hd1",
 				"-append",
-				"\"console=ttyS0 root=/dev/ram rw\""
+				// "\"console=ttyS0 root=/dev/ram rw\""
+				"\"console=ttyS0 root=/dev/vdb rw\""
 			],
 			"detail": "配置 qemu boot",
 			"problemMatcher": [
@@ -214,7 +223,7 @@
 					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}"
 				}
 			},
-			"command": "qemu-system-riscv64 -nographic -machine virt -m 1G -bios opensbi/build/platform/generic/firmware/fw_dynamic.bin -drive if=pflash,format=raw,unit=0,file=edk2/Build/RiscVVirtQemu/DEBUG_GCC/FV/RISCV_VIRT_CODE.fd,readonly=on -drive if=pflash,format=raw,unit=1,file=edk2/Build/RiscVVirtQemu/DEBUG_GCC/FV/RISCV_VIRT_VARS.fd -drive file=esp.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0",
+			"command": "qemu-system-riscv64 -nographic -machine virt,pflash0=pflash0,pflash1=pflash1,acpi=off -m 1G -smp 1 -bios opensbi/build/platform/generic/firmware/fw_dynamic.bin -blockdev node-name=pflash0,driver=file,read-only=on,filename=edk2/Build/RiscVVirtQemu/DEBUG_GCC/FV/RISCV_VIRT_CODE.fd -blockdev node-name=pflash1,driver=file,filename=edk2/Build/RiscVVirtQemu/DEBUG_GCC/FV/RISCV_VIRT_VARS.fd -drive file=esp.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -serial mon:stdio -drive file=rootfs.ext4,format=raw,id=hd1 -device virtio-blk-device,drive=hd1",
 			"args": [],
 			"detail": "uefi boot 内核",
 			"problemMatcher": [
@@ -224,7 +233,7 @@
 		{
 			"label": "update esp.img",
 			"detail": "更新 esp.img",
-			"command": "cp linux/arch/riscv/boot/Image esp/ && cp rootfs.cpio.gz esp/ && sudo mount esp.img /mnt && sudo cp -r esp/* /mnt && sudo umount /mnt ",
+			"command": "cp linux/arch/riscv/boot/Image esp/ && sudo mount esp.img mnt && sudo cp -r esp/* mnt && sudo umount mnt ",
 			"type": "shell",
 			"options": {
 				"cwd": "${workspaceFolder}"
@@ -232,7 +241,7 @@
 			"problemMatcher": [
 				"$nvcc"
 			],
-			"dependsOn": "gen rootfs"
+			// "dependsOn": "gen rootfs"
 		},
 		{
 			"label": "uefi boot debug",
@@ -243,12 +252,27 @@
 					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}"
 				}
 			},
-			"command": "qemu-system-riscv64 -nographic -machine virt -m 1G -bios opensbi/build/platform/generic/firmware/fw_dynamic.bin -drive if=pflash,format=raw,unit=0,file=edk2/Build/RiscVVirtQemu/DEBUG_GCC/FV/RISCV_VIRT_CODE.fd,readonly=on -drive if=pflash,format=raw,unit=1,file=edk2/Build/RiscVVirtQemu/DEBUG_GCC/FV/RISCV_VIRT_VARS.fd -drive file=esp.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -S -s",
+			"command": "qemu-system-riscv64 -nographic -machine virt,pflash0=pflash0,pflash1=pflash1,acpi=off -m 1G -smp 1 -bios opensbi/build/platform/generic/firmware/fw_dynamic.bin -blockdev node-name=pflash0,driver=file,read-only=on,filename=edk2/Build/RiscVVirtQemu/DEBUG_GCC/FV/RISCV_VIRT_CODE.fd -blockdev node-name=pflash1,driver=file,filename=edk2/Build/RiscVVirtQemu/DEBUG_GCC/FV/RISCV_VIRT_VARS.fd -drive file=esp.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -serial mon:stdio -drive file=rootfs.ext4,format=raw,id=hd1 -device virtio-blk-device,drive=hd1 -S -s",
 			"args": [],
 			"detail": "uefi boot debug 内核",
 			"problemMatcher": [
 				"$nvcc"
 			]
 		},
+		{
+			"label": "mkfs.ext4",
+			"command": "dd if=/dev/zero of=rootfs.ext4 bs=1M count=64 && mkfs.ext4 rootfs.ext4 && sudo mount rootfs.ext4 mnt && sudo cp -r rootfs/* mnt/ && sudo umount mnt",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"PATH": "${env:HOME}/Code/python3.12/bin:${env:PATH}"
+				}
+			},
+			"detail": "制作 ext4 rootfs文件",
+			"problemMatcher": [
+				"$gcc"
+			]
+		}
 	]
 }
