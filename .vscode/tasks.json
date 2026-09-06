@@ -139,9 +139,11 @@
 				"virtio-blk-device,drive=hd1",
 				"-drive",
 				"file=rootfs.ext4,format=raw,id=hd1",
+				"-device",
+				"virtio-net-pci",
 				"-append",
 				// "\"console=ttyS0 root=/dev/ram rw\""
-				"\"console=ttyS0 root=/dev/vdb rw\""
+				"\"console=ttyS0 root=/dev/vdb rw init=/init\""
 			],
 			"detail": "配置 qemu boot",
 			"problemMatcher": [
@@ -165,10 +167,21 @@
 				"256M",
 				"-kernel",
 				"linux/arch/riscv/boot/Image",
-				"-initrd",
-				"rootfs.cpio.gz",
+				// "-initrd",
+				// "rootfs.cpio.gz",
+				"-device",
+				"virtio-blk-device,drive=hd0",
+				"-drive",
+				"file=esp.img,format=raw,id=hd0",
+				"-device",
+				"virtio-blk-device,drive=hd1",
+				"-drive",
+				"file=rootfs.ext4,format=raw,id=hd1",
+				"-device",
+				"virtio-net-pci",
 				"-append",
-				"\"console=ttyS0 root=/dev/ram rw\"",
+				// "\"console=ttyS0 root=/dev/ram rw\""
+				"\"console=ttyS0 root=/dev/vdb rw init=/init\"",
 				"-s",
 				"-S"
 			],

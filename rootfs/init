@@ -1,6 +1,8 @@
 #!/bin/sh
-mount -t proc none /proc
-mount -t sysfs none /sys
-mount -t devtmpfs none /dev
+
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+
 echo "Booted RISC-V Linux!"
+
 exec /sbin/init
